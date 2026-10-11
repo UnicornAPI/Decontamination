@@ -1,0 +1,38 @@
+<Project>
+  <!--
+    Пути для сборки. Нужна папка игры с BepInEx (запущенным хотя бы раз) и установленным UnicornAPI:
+      dotnet build -c Release -p:GameDir="D:\Steam\steamapps\common\SCP Project 90"
+    Без GameDir ищется ./libs с той же структурой (libs/BepInEx/core, libs/BepInEx/interop,
+    libs/BepInEx/plugins/UnicornAPI/UnicornAPI.dll). Путь к UnicornAPI.dll можно задать отдельно: -p:UnicornApiDll=...
+    UnicornPlugin=true: Assembly-CSharp/Mirror не подключаются, плагин работает только через API UnicornAPI.
+  -->
+  <PropertyGroup>
+    <GameDir Condition="'$(GameDir)' == ''">$(MSBuildThisFileDirectory)libs</GameDir>
+    <BepInExCore>$(GameDir)\BepInEx\core</BepInExCore>
+    <Interop>$(GameDir)\BepInEx\interop</Interop>
+    <UnicornApiDll Condition="'$(UnicornApiDll)' == ''">$(GameDir)\BepInEx\plugins\UnicornAPI\UnicornAPI.dll</UnicornApiDll>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591;CS8632</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="UnicornAPI"><HintPath>$(UnicornApiDll)</HintPath><Private>false</Private></Reference>
+    <Reference Include="$(BepInExCore)\BepInEx.Core.dll" Private="false" />
+    <Reference Include="$(BepInExCore)\BepInEx.Unity.IL2CPP.dll" Private="false" />
+    <Reference Include="$(BepInExCore)\0Harmony.dll" Private="false" />
+    <Reference Include="$(BepInExCore)\Il2CppInterop.Runtime.dll" Private="false" />
+    <Reference Include="$(BepInExCore)\Il2CppInterop.Common.dll" Private="false" />
+    <Reference Include="$(Interop)\Assembly-CSharp.dll" Private="false" Condition="'$(UnicornPlugin)' != 'true'" />
+    <Reference Include="$(Interop)\Mirror.dll" Private="false" Condition="'$(UnicornPlugin)' != 'true'" />
+    <Reference Include="$(Interop)\Il2Cppmscorlib.dll" Private="false" />
+    <Reference Include="$(Interop)\Il2CppSystem.dll" Private="false" />
+    <Reference Include="$(Interop)\UnityEngine.dll" Private="false" />
+    <Reference Include="$(Interop)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(Interop)\UnityEngine.PhysicsModule.dll" Private="false" />
+    <Reference Include="$(Interop)\UnityEngine.AnimationModule.dll" Private="false" />
+  </ItemGroup>
+</Project>
